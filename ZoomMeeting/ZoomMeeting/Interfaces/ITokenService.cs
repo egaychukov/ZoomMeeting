@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ZoomMeeting.Models;
 
 namespace ZoomMeeting.Interfaces
 {
-    internal interface ITokenService
+    public interface ITokenService
     {
-        (string AccessToken, string ResreshToken) GetTokenPair(string cliendId, string redirectUri);
+        string GetAuthorizationUri(string cliendId, string redirectUri);
+        Task<(string AccessToken, string RefreshToken)> GetTokenPair(TokenRequest tokenRequest);
     }
 }
