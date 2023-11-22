@@ -20,7 +20,6 @@ namespace ZoomMeeting.Services
         {
             var response = await "https://zoom.us/oauth/token"
                 .WithBasicAuth(tokenRequest.ClientId, tokenRequest.ClientSecret)
-                .WithHeader("Content-Type", "application/x-www-form-urlencoded")
                 .PostUrlEncodedAsync(new { 
                     code = tokenRequest.AuthorizationCode,
                     grant_type = "authorization_code",
@@ -31,6 +30,21 @@ namespace ZoomMeeting.Services
 
             var tokens = await response.GetJsonAsync<TokenResponse>();
             return (tokens.access_token, tokens.refresh_token);
+        }
+
+        public async Task<string> RefreshAccessToken(RefreshTokenRequest request)
+        {
+            var response = await "https://zoom.us/oauth/token"
+                .WithBasicAuth(request.ClientId, request.ClientSecret)
+                .PostUrlEncodedAsync(new {
+                    grant_type = "refresh_token",
+                    refresh_token = request.RefreshToken,
+                });
+
+            response.ResponseMessage.EnsureSuccessStatusCode();
+           
+            var responseBody = await response.GetJsonAsync<RefreshTokenResponse>();
+            return responseBody.access_token;
         }
     }
 }
