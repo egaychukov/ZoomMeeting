@@ -2,6 +2,7 @@
 using Flurl;
 using Flurl.Http;
 using ZoomMeeting.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace ZoomMeeting.Services
 {
@@ -45,6 +46,18 @@ namespace ZoomMeeting.Services
            
             var responseBody = await response.GetJsonAsync<RefreshTokenResponse>();
             return responseBody.access_token;
+        }
+
+        public bool TokenExpired(string token)
+        {
+            return DateTime.UtcNow >= GetTokenExirationDate(token);
+        }
+
+        private DateTime GetTokenExirationDate(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            return jwtToken.ValidTo;
         }
     }
 }
