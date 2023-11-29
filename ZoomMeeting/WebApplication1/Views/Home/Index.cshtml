@@ -1,0 +1,31 @@
+﻿@model IRequestCookieCollection;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div>
+    Access Token: @ViewData["AccessToken"]
+</div>
+
+<a href="@Url.Action("CreateMeeting", "Home", new {token = ViewData["AccessToken"] })">Create Meeting</a>
+
+<table>
+    @foreach (var cookie in Model)
+    {
+        <tr>
+            <td>
+                @cookie.Key
+            </td>
+            <td>
+                @cookie.Value
+            </td>
+            <td>
+                <a href="@Url.Action("UpdateMeeting", "Home", new { meetingId = cookie.Key, token = ViewData["AccessToken"]  })">Update</a>
+            </td>
+            <td>
+                <a href="@Url.Action("DeleteMeeting", "Home", new { meetingId = cookie.Key, token = ViewData["AccessToken"] })">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
