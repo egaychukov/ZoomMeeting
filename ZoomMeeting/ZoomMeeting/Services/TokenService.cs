@@ -8,9 +8,10 @@ namespace ZoomMeeting.Services
 {
     public class TokenService : ITokenService
     {
-        public string GetAuthorizationUri(string clientId, string redirectUri)
+        private const string ZoomOAuthBaseUrl = "https://zoom.us/oauth";
+        public string GetAuthorizationUrl(string clientId, string redirectUri)
         {
-            return "https://zoom.us/oauth/authorize"
+            return Url.Combine(ZoomOAuthBaseUrl, "authorize")
                 .AppendQueryParam("response_type", "code")
                 .AppendQueryParam("client_id", clientId)
                 .AppendQueryParam("redirect_uri", redirectUri)
@@ -19,7 +20,7 @@ namespace ZoomMeeting.Services
 
         public async Task<(string AccessToken, string RefreshToken)> GetTokenPair(TokenRequest tokenRequest)
         {
-            var response = await "https://zoom.us/oauth/token"
+            var response = await Url.Combine(ZoomOAuthBaseUrl, "token")
                 .WithBasicAuth(tokenRequest.ClientId, tokenRequest.ClientSecret)
                 .PostUrlEncodedAsync(new { 
                     code = tokenRequest.AuthorizationCode,
@@ -35,7 +36,7 @@ namespace ZoomMeeting.Services
 
         public async Task<string> RefreshAccessToken(RefreshTokenRequest request)
         {
-            var response = await "https://zoom.us/oauth/token"
+            var response = await Url.Combine(ZoomOAuthBaseUrl, "token")
                 .WithBasicAuth(request.ClientId, request.ClientSecret)
                 .PostUrlEncodedAsync(new {
                     grant_type = "refresh_token",
