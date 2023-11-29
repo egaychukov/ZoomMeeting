@@ -1,0 +1,18 @@
+﻿@model IRequestCookieCollection;
+
+<table>
+    @foreach(var cookie in Model)
+    {
+        <tr>
+            <td>
+                @cookie.Key
+            </td>
+            <td>
+                @cookie.Value
+            </td>
+            <td>
+                <a href="@Url.Action("DeleteMeeting", "Home", new { meetingId = cookie.Value, token = ViewData["AccessToken"] })">Delete</a>
+            </td>
+        </tr>
+    }
+</table>
